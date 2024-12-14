@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>User Form</title>
+  </head>
+  <body style="margin: 0">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!-- <a class="navbar-brand" href="#">DAY-TO-DAY expense</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button> -->
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="daily.html">DAILY  <span class="sr-only"> </span></a>
+          <a class="nav-item nav-link" href="monthly.html">MONTHLY</a>
+          <a class="nav-item nav-link" href="yearly.html">YEARLY</a>
+
+ 
+        </div>
+      </div>
+    </nav>
+
+<br>
+<div class="container">
+  <button class="arrow left" id="prevDate">&lt;</button>
+  <div class="content">
+      <div class="date" onclick="handleDateInput()" >
+          <span class="day">16</span>
+          <div class="month-year">
+              <span class="month">February,</span>
+              <span class="year">2002</span>
+          </div>
+          <span class="weekday">friday</span>
+          <span class="whole-date">16/02/2002</span>
+      </div>
+      <div class="savings">
+          <span>Savings</span>
+          <span class="amount">$5,440.00</span>
+      </div>
+  </div>
+  <button class="arrow right" id="nextDate">&gt;</button>
+</div>
+ 
+<!-- Hidden Date Picker -->
+<div style="opacity: 0%" class="date-picker">
+  <input type="date"  id="dateInput" onfocus="this.showPicker()">
+</div>
+
+ 
+
+<!-- Add button -->
+<button class="add-btn" id="addButton">+</button>
+
+<!-- Popup -->
+<div class="popup" id="popupForm">
+  <div class="popup-content">
+    <span class="close-btn" id="closePopup">&times;</span>
+    <form id="exampleForm">
+      <!-- Radio Buttons -->
+      <div class="mb-3">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inputType" id="creditOption" value="credit" checked>
+          <label class="form-check-label" for="creditOption">Credit</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inputType" id="debitOption" value="debit">
+          <label class="form-check-label" for="debitOption">Debit</label>
+        </div>
+      </div>
+
+      <!-- Input Fields -->
+      <div class="mb-3">
+        <input type="text" class="form-control mb-2" id="inputValue1" name="inputValue1" placeholder="Enter amount">
+        <input type="text" class="form-control" id="inputValue2" name="inputValue2" placeholder="Enter description">
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+  </div>
+</div>
+<h1>
+
+  <ul id="userexpense"></ul></h1>
+      <!-- Username Field -->
+ 
+    <!-- Unordered list to display the users --> 
+ 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

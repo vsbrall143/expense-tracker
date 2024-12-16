@@ -43,12 +43,21 @@ body {
     display: flex;
     align-items: center;
     background-color: #4b8b7d;
-    color: white;
+    /* color: rgb(255, 255, 255); */
     padding: 20px 30px;
-    border-radius: 8px;
+    border-radius: 10px;
     max-width: 600px;
     width: 90%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#cont{
+ 
+ 
+    color:#ffffff;
+    border-radius: 30px;
+    height: 250px;
+ 
 }
 
 /* Arrow buttons styling */

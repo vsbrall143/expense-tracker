@@ -8,18 +8,44 @@ const form = document.getElementById('exampleForm');
 
 // Add event listener for form submission
  
+window.onload = function() {
+  handleMonthChange();
+  handleYearChange();
+  handleDateChange() 
+}
+
+
+
+ 
 form.addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(form); // Collect form data
     const inputType = formData.get('inputType'); // Get selected radio button value
     const inputValue1 = formData.get('inputValue1'); // Get input field value
     const inputValue2 = formData.get('inputValue2'); // Get input field value
-    const date = document.getElementsByClassName('whole-date')[0].innerText;  // Get input field value
+    // const date = document.getElementsByClassName('whole-date')[0].innerText;  // Get input field value
+    const day = document.getElementsByClassName('day')[0].innerText;
+    const month = document.getElementsByClassName('month')[0].innerText;
+    const year = document.getElementsByClassName('year')[0].innerText;
+    var credit=0;
+    var debit=0;
+    if(inputType==='credit'){
 
+      credit = inputValue1;
+      console.log(credit);
+    }
+    else{
+
+      debit = inputValue1;
+      console.log(debit);
+    }
     const userDetails = {
-      date: date,
-      type:inputType,
-      amount:inputValue1,
+ 
+      day: day,
+      month: month,
+      year: year,
+      credit: credit,
+      debit: debit,
       description: inputValue2
     };
     console.log(userDetails);
@@ -29,7 +55,7 @@ form.addEventListener('submit', function(event) {
     .then((res) => {
       console.log(res);
       // Display the updated users list
-      displayUsers();
+      // displayUsers();
     })
     .catch((err) => console.log(err));
 
@@ -37,128 +63,175 @@ form.addEventListener('submit', function(event) {
     document.getElementById('inputValue2').value = '';
 });
 
+
+
+
+  
+function handleOnTap() {                             // this function opens the calender to take input when input calender is tapped in all pages
  
-// Function to display users on the page
-function displayUsers() {
-  // Get the user list element (ul) from the DOM
-  const userList = document.getElementById('user-list');
+  document.getElementById('dateInput').focus();
 
-  // Clear the existing list to avoid duplication
-  userList.innerHTML = '';
-
-  axios.get("http://localhost:2000/user/get-expenses")
-    .then((res) => {
- 
-      for (let i = 0; i < res.data.allUsers.length; i++) {
-        const user = res.data.allUsers[i];
-        console.log(user);
-        
-        // Create a list item for each user
-        const listItem = document.createElement('li');
-
-        // Create a <div> element with a class name
-        const div = document.createElement('div');
-        div.className = 'container mt-5>'; // Replace 'your-class-name' with your desired class name
-        div.textContent = `date: ${user.id}, type: ${user.type}, amount: ${user.amount}, description: ${user.description}`;
-        
-        // Append the <div> to the <li>
-        listItem.appendChild(div);
-        
-        // Append the <li> to the userList
-        userList.appendChild(listItem);
-      }
-    })
-    .catch((err) => console.log(err));
 }
-
-// Initialize the users list display when the page loads
-window.onload = displayUsers;
-// displayUsers();
-
-
-// dateInput.addEventListener('input', function() {
-//   const selectedDate = dateInput.value;
-//   console.log('Date input changed to:', selectedDate);
  
- 
-//     axios.post("http://localhost:2000/user/add-user", selectedDate)
-//       .then((res) => {
-//         console.log(res);
-//         // Display the updated users list
-//         displayUsers();
-//       })
-//       .catch((err) => console.log(err));
-// });
 
-// Add click event listener to the date container
- function handleDateInput() {
-    // Programmatically trigger the date input's click event
- 
-    document.getElementById('dateInput').focus();
-    // document.getElementById('dateInput').style="opacity: 1%";
+
+
+async function handleMonthChange() {
+  document.getElementById('month-list').innerHTML = '';
+
+  const selectedDate = new Date(dateInput.value);
+  var month = selectedDate.toLocaleString("default", { month: "long" });
+  var year = selectedDate.getFullYear();
+
+  // Check for invalid date and handle it (optional)
+  if (isNaN(year)) {
+    month = "February";
+    year = 2024; // Use default year
+  }
+
+  yearElement.textContent = year;
+  monthElement.textContent = `${month},`;
+  month=monthElement.textContent;
+
+  try {
+    const response = await axios.get(`http://localhost:2000/user/get-expenses/${month}/${year}`);
+    const MonthList = document.getElementById('month-list');
+
+    for (let i = 0; i < response.data.users.length; i++) {
+      const user = response.data.users[i];
+
+      // Create list item and populate content
+      const listItem = document.createElement('li');
+      const div = document.createElement('div');
+      div.id = "cont";
+      div.textContent = `date: ${user.day} ${user.month} ${user.year}`;
+      const div2 = document.createElement('div');
+      div2.textContent = ` credit: ${user.credit}, debit: ${user.debit}, description: ${user.description}`;
+      div2.className = 'container mt-5>';
+      div2.appendChild(div);
+      listItem.appendChild(div2);
+
+      // Append to the month list
+      MonthList.appendChild(listItem);
+    }
+  } catch (err) {
+    console.error(err); // Handle errors from the API call
+  }
 }
-// Update the container date when a new date is selected
-dateInput.addEventListener("change", () => {
+ 
+  
+
+
+async function handleYearChange() {
+  document.getElementById('year-list').innerHTML = '';
+
+  const selectedDate = new Date(dateInput.value);
+  var year = selectedDate.getFullYear();
+
+  // Check for invalid date and handle it (optional)
+  if (isNaN(year)) {
+    year = 2024; // Use default year
+  }
+
+  yearElement.textContent = year;
+
+  try {
+    const response = await axios.get(`http://localhost:2000/user/get-expenses/${year}`);
+    const YearList = document.getElementById('year-list');
+
+    for (let i = 0; i < response.data.users.length; i++) {
+      const user = response.data.users[i];
+
+      // Create list item and populate content
+      const listItem = document.createElement('li');
+      const div = document.createElement('div');
+      div.id = "cont";
+      div.textContent = `date: ${user.day} ${user.month}`;
+      const div2 = document.createElement('div');
+      div2.textContent = ` credit: ${user.credit}, debit: ${user.debit}, description: ${user.description}`;
+      div2.className = 'container mt-5>';
+      div2.appendChild(div);
+      listItem.appendChild(div2);
+
+      // Append to the year list
+      YearList.appendChild(listItem);
+    }
+  } catch (err) {
+    console.error(err); // Handle errors from the API call
+  }
+}
+ 
+ 
+
+async function handleDateChange() {
   const selectedDate = new Date(dateInput.value);
 
-  const formattedDate = selectedDate.toLocaleString("default", {
-    // weekday: "long", // Full weekday name
-    day: "2-digit",  // Day in two-digit format
-    month: "2-digit",   // Full month name
-    year: "numeric", // Full year
-  });
-
-  const numericDate = parseInt(formattedDate.replace(/\//g, ''), 10);
-  
   // Extract date components
-  const day = selectedDate.getDate();
-  const month = selectedDate.toLocaleString("default", { month: "long" });
-  const year = selectedDate.getFullYear();
+  var day = selectedDate.getDate();
+  var month = selectedDate.toLocaleString("default", { month: "long" });
+  var year = selectedDate.getFullYear();
   const weekday = selectedDate.toLocaleString("default", { weekday: "long" });
 
-  // Update container
+  // Check for invalid date and handle it (optional)
+  if (isNaN(month)) {
+    day = 16;
+    month = "February";
+    year = 2024; // Use default values
+  }
 
-  formatdate.textContent=numericDate;
   dayElement.textContent = day.toString().padStart(2, "0");
   monthElement.textContent = `${month},`;
   yearElement.textContent = year;
   weekdayElement.textContent = weekday;
+  month=monthElement.textContent;
 
- 
+  try {
+    const response = await axios.get(`http://localhost:2000/user/get-expense/${day}/${month}/${year}`);
+    const expenses = response.data.expenses; // Assumes the API response contains an array of expenses
+    const userexpense = document.getElementById('userexpense');
 
-  axios.get(`http://localhost:2000/user/get-expense/${numericDate}`)
-    .then((res) => {
-       
-        const expense = res.data.expense;
-        const userexpense = document.getElementById('userexpense');
-        userexpense.innerHTML = '';
-        // Create a list item for each user
-        const listItem = document.createElement('li');
+    // Clear previous content
+    userexpense.innerHTML = '';
 
-        // Create a <div> element with a class name
-        const div = document.createElement('div');
-        div.className = 'container mt-5>'; // Replace 'your-class-name' with your desired class name
-        div.textContent = `date: ${expense.id}, type: ${expense.type}, amount: ${expense.amount}, description: ${expense.description}`;
-    
-        // Append the <div> to the <li>
-        listItem.appendChild(div);
-        // Append the <li> to the userList
-        userexpense.appendChild(listItem);
-    })
-    .catch((err) => console.log(err));
-});
+    // Loop through each expense and create a list item
+    expenses.forEach((user) => {
+      // Create a list item
+      const listItem = document.createElement('li');
 
-// Optional: Add functionality to navigate dates
-const prevDateBtn = document.getElementById("prevDate");
-const nextDateBtn = document.getElementById("nextDate");
+      // Create a <div> element with a class name
+      const div = document.createElement('div');
+      div.id = "cont";
+      div.textContent = `date: ${user.day} ${user.month} ${user.year}`;
+      const div2 = document.createElement('div');
+      div2.textContent = ` credit: ${user.credit}, debit: ${user.debit}, description: ${user.description}`;
+      div2.className = 'container mt-5>';
+      div2.appendChild(div);
+      listItem.appendChild(div2);
 
-prevDateBtn.addEventListener("click", () => {
-  adjustDate(-1);
-});
+      // Append the <li> to the userexpense element
+      userexpense.appendChild(listItem);
+    });
+  } catch (err) {
+    console.error(err); // Handle errors from the API call
+  }
+}
 
-nextDateBtn.addEventListener("click", () => {
-  adjustDate(1);
-});
+
+//------------------------------------------------------------------------------------------------------------------
+
+// Add functionality to navigate dates months years
+
+function handleDateNavigation(days) {
+  adjustDate(days);
+}
+
+function handleMonthNavigation(months) {
+  adjustMonth(months);
+}
+
+function handleYearNavigation(years) {
+  adjustYear(years);
+}
 
 function adjustDate(days) {
   const currentDate = new Date(dateInput.value || new Date());
@@ -167,9 +240,20 @@ function adjustDate(days) {
   dateInput.dispatchEvent(new Event("change")); // Trigger the change event
 }
 
+function adjustMonth(months) {
+  const currentDate = new Date(dateInput.value || new Date());
+  currentDate.setMonth(currentDate.getMonth() + months);
+  dateInput.value = currentDate.toISOString().split("T")[0]; // Set the input value
+  dateInput.dispatchEvent(new Event("change")); // Trigger the change event
+}
 
+function adjustYear(years) {
+  const currentDate = new Date(dateInput.value || new Date());
+  currentDate.setFullYear(currentDate.getFullYear() + years);
+  dateInput.value = currentDate.toISOString().split("T")[0]; // Set the input value
+  dateInput.dispatchEvent(new Event("change")); // Trigger the change event
+}
 
- 
  //-----------------------------------------------------------------------------------------------------------------------
 
  // Get elements

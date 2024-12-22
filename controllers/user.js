@@ -124,20 +124,29 @@ exports.getExpense = async (req, res, next) => {
  };
 
 
+ exports.postsignup = async (req, res, next) => {
+  try {
+    console.log("Handling signup request...");
+    console.log(req.body);
 
-exports.postsignup = async (req, res, next) => {
+    const { username, email, password } = req.body;
 
-  console.log("hhhhhhhhh");
-  console.log(req.body)
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
-    
-  const data = await signup.create({
+    // Check if the email already exists
+    const existingUser = await signup.findOne({ where: { email} });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists with this email." });
+    }
 
-    username: username,
-    email: email,
-    password: password
-  });
-  res.status(201).json({ newSignUpDetails: data });
+    // Create a new user if the email is not taken
+    const data = await signup.create({
+      username,
+      email,
+      password,
+    });
+
+    res.status(201).json({ newSignUpDetails: data });
+  } catch (error) {
+    console.error("Error during signup:", error);
+    res.status(500).json({ message: "An error occurred during signup." });
+  }
 };

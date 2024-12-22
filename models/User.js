@@ -10,11 +10,26 @@ const User = sequelize.define('expense', {
     primaryKey: true
   },
 
-  type: {
+  day: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  amount: {
+
+  month: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  year: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  credit: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  debit: {
     type: Sequelize.STRING,
     allowNull: false
   },

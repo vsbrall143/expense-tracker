@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize=require('./util/database'); 
-const User=require('./models/User')
+ 
 
 
 const app = express();

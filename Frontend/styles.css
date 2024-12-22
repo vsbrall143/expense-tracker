@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,31 +11,37 @@ body {
 }
 
 /* Navbar styling */
-.navbar {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 2px solid #ddd;
-    background-color: #f8f9fa;
-}
-
-.navbar .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #4b8b7d;
-}
-
-.navbar .navbar-nav .nav-link {
-    font-size: 1rem;
-    margin-right: 15px;
-    color: #4b8b7d;
-}
-
-.navbar .navbar-nav .nav-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
+    /* Custom styles for navbar links */
+    .navbar-nav .nav-link {
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 10px 15px;
+      }
+      .navbar-toggler {
+        border: none;
+        outline: none;
+      }
+      .navbar-toggler-icon {
+        background-color: #555555;
+        width: 30px;
+        height: 3px;
+        display: block;
+        margin: 5px auto;
+      }
+      .navbar-toggler-icon::after,
+      .navbar-toggler-icon::before {
+        content: "";
+        background-color: #333;
+        width: 30px;
+        height: 3px;
+        display: block;
+        margin: 5px auto;
+      }
+      .navbar-light .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
 
 /* Main container styling */
 .container {
@@ -64,23 +70,23 @@ body {
 .arrow {
     background: none;
     border: none;
-    color: white;
-    font-size: 1.5rem;
+    color: rgb(0, 0, 0);
+    font-size: 2rem;
     cursor: pointer;
     padding: 0 10px;
     transition: transform 0.2s;
 }
 
 .arrow:hover {
-    transform: scale(1.2);
+    transform: scale(2);
 }
 
 .arrow.left {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .arrow.right {
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 /* Content styling */
@@ -164,22 +170,27 @@ body {
     /* Add button styles */
     .add-btn {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #007bff;
+        bottom: 40px;
+        right: 40px;
+        background-color: #4b8b7d;
         color: white;
         border: none;
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 24px;
         cursor: pointer;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 100s;
       }
   
+      .add-btn:hover {
+        transform: scale(50);
+    }
+
       /* Popup styles */
       .popup {
         display: none;

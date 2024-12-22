@@ -12,17 +12,28 @@
   <body style="margin: 0">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <!-- <a class="navbar-brand" href="#">DAY-TO-DAY expense</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button> -->
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="daily.html"><h2>DAILY</h2><span class="sr-only"> </span></a>
-          <a class="nav-item nav-link" href="monthly.html"><h2>MONTHLY</h2></a>
-          <a class="nav-item nav-link" href="yearly.html"><h2>YEARLY</h2></a>
-
+      <div class="container-fluid">
  
+        <!-- Toggler button for small screens -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav ms-auto">
+            <a class="nav-item nav-link active" href="daily.html">Daily</a>
+            <a class="nav-item nav-link" href="monthly.html">Monthly</a>
+            <a class="nav-item nav-link" href="yearly.html">Yearly</a>
+            <a class="nav-item nav-link" href="signup.html">sign-up</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -42,7 +53,7 @@
       </div>
       <div class="savings">
           <span>Savings</span>
-          <span class="amount">$5,440.00</span>
+          <h1><span id="amount">rs5,440.00</span></h1>
       </div>
   </div>
   <button class="arrow right" onclick="handleDateNavigation(1)" id="nextDate">&gt;</button>

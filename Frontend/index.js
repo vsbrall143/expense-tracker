@@ -97,6 +97,17 @@ async function handleMonthChange() {
     const response = await axios.get(`http://localhost:2000/user/get-expenses/${month}/${year}`);
     const MonthList = document.getElementById('month-list');
 
+ 
+    let credit = 0;  
+    let debit = 0;
+    response.data.users.forEach((expense) => {
+      credit += Number(expense.credit) || 0; // Convert credit to a number, default to 0 if undefined/null
+      debit += Number(expense.debit) || 0; // Convert debit to a number, default to 0 if undefined/null
+    });
+    let total = credit - debit;
+ 
+    document.getElementById("amount").innerHTML=total;
+
     for (let i = 0; i < response.data.users.length; i++) {
       const user = response.data.users[i];
 
@@ -139,6 +150,15 @@ async function handleYearChange() {
     const response = await axios.get(`http://localhost:2000/user/get-expenses/${year}`);
     const YearList = document.getElementById('year-list');
 
+    let credit = 0;  
+    let debit = 0;
+    response.data.users.forEach((expense) => {
+      credit += Number(expense.credit) || 0; // Convert credit to a number, default to 0 if undefined/null
+      debit += Number(expense.debit) || 0; // Convert debit to a number, default to 0 if undefined/null
+    });
+    let total = credit - debit;
+    document.getElementById("amount").innerHTML=total;
+
     for (let i = 0; i < response.data.users.length; i++) {
       const user = response.data.users[i];
 
@@ -165,7 +185,7 @@ async function handleYearChange() {
 
 async function handleDateChange() {
   const selectedDate = new Date(dateInput.value);
-
+  document.getElementById('userexpense').innerHTML = '';
   // Extract date components
   var day = selectedDate.getDate();
   var month = selectedDate.toLocaleString("default", { month: "long" });
@@ -173,38 +193,50 @@ async function handleDateChange() {
   const weekday = selectedDate.toLocaleString("default", { weekday: "long" });
 
   // Check for invalid date and handle it (optional)
-  if (isNaN(month)) {
+  if (isNaN(year)) {
     day = 16;
     month = "February";
     year = 2024; // Use default values
   }
 
-  dayElement.textContent = day.toString().padStart(2, "0");
+  dayElement.textContent = day;
   monthElement.textContent = `${month},`;
   yearElement.textContent = year;
   weekdayElement.textContent = weekday;
   month=monthElement.textContent;
 
   try {
-    const response = await axios.get(`http://localhost:2000/user/get-expense/${day}/${month}/${year}`);
+    const response = await axios.get(
+      `http://localhost:2000/user/get-expense/${day}/${month}/${year}`
+    );
     const expenses = response.data.expenses; // Assumes the API response contains an array of expenses
-    const userexpense = document.getElementById('userexpense');
-
-    // Clear previous content
-    userexpense.innerHTML = '';
-
+    const userexpense = document.getElementById("userexpense");
+    expensesTillDay = response.data.expensesTillDay;
+ 
+    userexpense.innerHTML = "";
+    let credit = 0;
+    let debit = 0;
+    // Ensure credit and debit are treated as numbers
+    expensesTillDay.forEach((expense) => {
+      credit += Number(expense.credit) || 0; // Convert credit to a number, default to 0 if undefined/null
+      debit += Number(expense.debit) || 0; // Convert debit to a number, default to 0 if undefined/null
+    });
+    let total = credit - debit;
+    // console.log(total);
+    // console.log("hello")
+    document.getElementById("amount").innerHTML=total;
     // Loop through each expense and create a list item
     expenses.forEach((user) => {
       // Create a list item
-      const listItem = document.createElement('li');
+      const listItem = document.createElement("li");
 
       // Create a <div> element with a class name
-      const div = document.createElement('div');
+      const div = document.createElement("div");
       div.id = "cont";
       div.textContent = `date: ${user.day} ${user.month} ${user.year}`;
-      const div2 = document.createElement('div');
+      const div2 = document.createElement("div");
       div2.textContent = ` credit: ${user.credit}, debit: ${user.debit}, description: ${user.description}`;
-      div2.className = 'container mt-5>';
+      div2.className = "container mt-5>";
       div2.appendChild(div);
       listItem.appendChild(div2);
 

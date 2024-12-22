@@ -19,4 +19,6 @@ router.get('/user/get-expense/:day/:month/:year' , adminController.getExpense)
   
 router.post('/user/signup', adminController.postsignup)
 
+router.post('/user/login', adminController.postlogin)
+
 module.exports = router;

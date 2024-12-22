@@ -124,6 +124,31 @@ exports.getExpense = async (req, res, next) => {
  };
 
 
+ exports.postlogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if the user exists in the database
+    const user = await signup.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    // Validate password (Add hash comparison if applicable)
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    // If everything is okay, return success
+    res.status(200).json({ message: "Logged in successfully!" });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "An error occurred during login." });
+  }
+};
+
+
  exports.postsignup = async (req, res, next) => {
   try {
     console.log("Handling signup request...");

@@ -1,5 +1,6 @@
 const User=require('../models/User')
 const signup=require('../models/SignupUser')
+const bcrypt=require('bcrypt');
 // const { Op } = require('sequelize');
 
 
@@ -124,29 +125,33 @@ exports.getExpense = async (req, res, next) => {
  };
 
 
+
+ 
  exports.postlogin = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if the user exists in the database
-    const user = await signup.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(404).json({ message: "User does not exist" });
-    }
-
-    // Validate password (Add hash comparison if applicable)
-    if (user.password !== password) {
-      return res.status(401).json({ message: "Incorrect password" });
-    }
-
-    // If everything is okay, return success
-    res.status(200).json({ message: "Logged in successfully!" });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "An error occurred during login." });
-  }
-};
+   try {
+     const { email, password } = req.body;
+ 
+     // Check if the user exists in the database
+     const user = await signup.findOne({ where: { email } });
+ 
+     if (!user) {
+       return res.status(404).json({ message: "User does not exist" });
+     }
+ 
+     // Validate password using bcrypt
+     const isMatch = await bcrypt.compare(password, user.password);
+     if (isMatch) {
+       return res.status(200).json({ success: true, message: "User logged in successfully" });
+     } else {
+       return res.status(400).json({ success: false, message: "Password is incorrect" });
+     }
+ 
+   } catch (error) {
+     console.error("Error during login:", error);
+     res.status(500).json({ message: "An error occurred during login." });
+   }   
+ };
+ 
 
 
  exports.postsignup = async (req, res, next) => {
@@ -162,14 +167,20 @@ exports.getExpense = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists with this email." });
     }
 
-    // Create a new user if the email is not taken
-    const data = await signup.create({
-      username,
-      email,
-      password,
-    });
+    bcrypt.hash(password,10,async (err,hash) => {     //10 is for salt rounds more making password more unique
+      console.log(err);
+      await signup.create({username,email,password:hash})
+      res.status(201).json({message:'sucessfully created new user'})
+    })
 
-    res.status(201).json({ newSignUpDetails: data });
+    // Create a new user if the email is not taken
+    // const data = await signup.create({
+    //   username,
+    //   email,
+    //   password,
+    // });
+
+    // res.status(201).json({ newSignUpDetails: data });
   } catch (error) {
     console.error("Error during signup:", error);
     res.status(500).json({ message: "An error occurred during signup." });

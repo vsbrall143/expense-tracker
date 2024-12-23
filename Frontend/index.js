@@ -61,6 +61,25 @@ form.addEventListener('submit', function(event) {
 
     document.getElementById('inputValue1').value = '';
     document.getElementById('inputValue2').value = '';
+
+    
+
+    const listItem = document.createElement("li");
+
+    // Create a <div> element with a class name
+    const div = document.createElement("div");
+    div.id = "cont";
+    div.textContent = `date: ${userDetails.day} ${userDetails.month} ${userDetails.year}`;
+    const div2 = document.createElement("div");
+    div2.textContent = ` credit: ${userDetails.credit}, debit: ${userDetails.debit}, description: ${userDetails.description}`;
+    div2.className = "container mt-5>";
+    div2.appendChild(div);
+    listItem.appendChild(div2);
+
+    // Append the <li> to the userexpense element
+    document.getElementById('userexpense').appendChild(listItem);
+
+
 });
 
 

@@ -18,6 +18,11 @@ const userroutes = require('./routes/user');
 
 app.use(userroutes);
 
+const Expense=require('./models/User')
+const User=require('./models/SignupUser')
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
  
 sequelize
 .sync()

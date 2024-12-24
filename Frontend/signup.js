@@ -38,8 +38,9 @@ async function loginForm(event) {
     try {
         const res = await axios.post(`http://localhost:2000/user/login`, loginDetails);
         console.log(res);
-        alert("Logged in successfully!");
-        window.location.href = "daily.html";
+        localStorage.setItem('token',res.data.token);
+        // alert("Logged in successfully!");
+        // window.location.href = "daily.html";
     } catch (error) {
         if (error.response && error.response.data) {
             // Display the error message from the server

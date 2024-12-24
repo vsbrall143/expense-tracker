@@ -225,9 +225,9 @@ async function handleDateChange() {
   month=monthElement.textContent;
 
   try {
-    const response = await axios.get(
-      `http://localhost:2000/user/get-expense/${day}/${month}/${year}`
-    );
+    const token= localStorage.getItem('token');
+    const response = await axios.get(`http://localhost:2000/user/get-expense/${day}/${month}/${year}`,{headers:{"Authorization" : token}});
+    
     const expenses = response.data.expenses; // Assumes the API response contains an array of expenses
     const userexpense = document.getElementById("userexpense");
     expensesTillDay = response.data.expensesTillDay;

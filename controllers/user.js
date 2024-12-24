@@ -1,6 +1,7 @@
 const User=require('../models/User')
 const signup=require('../models/SignupUser')
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken');
 // const { Op } = require('sequelize');
 
 
@@ -58,8 +59,9 @@ exports.getExpense = async (req, res, next) => {
     const day = parseInt(req.params.day, 10);  
     const month = req.params.month;  
     const year = parseInt(req.params.year, 10);  
-
-    console.log(req.params);
+    
+    const email=req.user.email;
+    // console.log(req.params);
     console.log(day);
     console.log(month);
     console.log(year);
@@ -67,6 +69,7 @@ exports.getExpense = async (req, res, next) => {
     // Query all expenses for the specified day, month, and year
     const expenses = await User.findAll({
       where: {
+        signupEmail:email,
         day: day,
         month: month,
         year: year
@@ -75,7 +78,9 @@ exports.getExpense = async (req, res, next) => {
 
     // Query all expenses for days less than 'day' in the same month and year
     const expensesTillDay = await User.findAll({
+
       where: {
+        signupEmail:email,
         day: { [Op.lt]: day},// Fetch days less than the current 'day'
 
         month: month,
@@ -125,6 +130,10 @@ exports.getExpense = async (req, res, next) => {
  };
 
 
+ function generateAccessToken(email){
+  return jwt.sign({email:email}, '8hy98h9yu89y98yn89y98y89')
+ }
+
 
  
  exports.postlogin = async (req, res, next) => {
@@ -141,7 +150,7 @@ exports.getExpense = async (req, res, next) => {
      // Validate password using bcrypt
      const isMatch = await bcrypt.compare(password, user.password);
      if (isMatch) {
-       return res.status(200).json({ success: true, message: "User logged in successfully" });
+       return res.status(200).json({ success: true, message: "User logged in successfully" ,token:generateAccessToken(user.email)});
      } else {
        return res.status(400).json({ success: false, message: "Password is incorrect" });
      }
@@ -167,7 +176,7 @@ exports.getExpense = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists with this email." });
     }
 
-    bcrypt.hash(password,10,async (err,hash) => {     //10 is for salt rounds more making password more unique
+    bcrypt.hash(password,10,async (err,hash) => {     //10 is for salt rounds more making passwo rd more unique
       console.log(err);
       await signup.create({username,email,password:hash})
       res.status(201).json({message:'sucessfully created new user'})

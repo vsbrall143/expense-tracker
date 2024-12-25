@@ -1,4 +1,31 @@
 /* General body styling */
+
+/* Position the Buy Premium button */
+.buy-premium {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 10px 15px;
+    background-color:#a1538d;
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it stays above other elements */
+    transition: transform 0.2s;
+  }
+  
+  .buy-premium:hover {
+    background-color:#a1538d;
+    transform: scale(1.2);
+  }
+
+
+ 
+ 
+
+  
 body {
     font-family: Arial, sans-serif;
     margin: 0;

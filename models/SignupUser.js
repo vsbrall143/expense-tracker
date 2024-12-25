@@ -18,6 +18,9 @@ const SignupUser = sequelize.define('signup', {
     allowNull: false
   },
 
+  isPremium:{
+    type: Sequelize.BOOLEAN
+  }
 });
 
 module.exports = SignupUser;

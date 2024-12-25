@@ -20,10 +20,15 @@ app.use(userroutes);
 
 const Expense=require('./models/User')
 const User=require('./models/SignupUser')
+const Order=require('./models/orders')
 
-User.hasMany(Expense);
+User.hasMany(Expense);       //relation of user with expenses
 Expense.belongsTo(User);
  
+User.hasMany(Order);         //relation of user with orders
+Order.belongsTo(User);
+
+
 sequelize
 .sync()
 .then((result) => {

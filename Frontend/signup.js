@@ -40,10 +40,11 @@ async function loginForm(event) {
         console.log(res);
         localStorage.setItem('token',res.data.token);
         // alert("Logged in successfully!");
-        // window.location.href = "daily.html";
+        window.location.href = "daily.html";
     } catch (error) {
         if (error.response && error.response.data) {
             // Display the error message from the server
+
             alert(error.response.data.message);
         } else {
             // Generic error message for unexpected errors

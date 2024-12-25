@@ -8,11 +8,14 @@ const jwt=require('jsonwebtoken');
 exports.getMonthExpenses = async (req, res, next) => {
   try {
     // Extract month parameter from the request
+    const email=req.user.email;
+
     const month = req.params.month;
     const year =req.params.year;
     // Find all users (expenses) with the given month
     const users = await User.findAll({
       where: {
+        signupEmail:email,
         month: month, // Filter records where month matches the parameter
         year:year
       }
@@ -33,9 +36,11 @@ exports.getYearExpenses = async (req, res, next) => {
     // Extract month parameter from the request
     const year = req.params.year;
 
+    const email=req.user.email;
     // Find all users (expenses) with the given month
     const users = await User.findAll({
       where: {
+        signupEmail:email,
         year:year
       }
     });
@@ -115,15 +120,17 @@ exports.getExpense = async (req, res, next) => {
    const credit = req.body.credit;
    const debit = req.body.debit;
    const description = req.body.description;
+   const email=req.user.email;
    const data = await User.create({
- 
      day: day,
      month: month,
      year: year,
      credit: credit,
      debit: debit,
      description: description,
+     signupEmail:email,
    });
+   console.log(data);
    res.status(201).json({ newUserDetails: data });
 
 

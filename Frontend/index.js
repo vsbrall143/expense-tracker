@@ -9,15 +9,62 @@ const form = document.getElementById('exampleForm');
 // Add event listener for form submission
  
 window.onload = function() {
+  isPremium();
   handleMonthChange();
   handleYearChange();
   handleDateChange() 
 }
 
 
+document.getElementById('rzp-button1').onclick = async function (e) {
+  console.log("helllllllllllllllllllllllllllooooooooooooooooooooo")
+  // const token = localStorage.getItem('token');
+  // console.log(token);
+  // console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhh");
+  try {
+  
+      const token = localStorage.getItem('token');
+      console.log(token);
+      const response = await axios.get(`http://localhost:2000/purchase/premiummembership`, {headers: { "Authorization": token }});
+
+      console.log(response);
+
+      var options = {
+          "key": response.data.key_id, // Enter the Key ID generated from the Dashboard
+          "order_id": response.data.order.id, // For one-time payment
+          "handler": async function (response) {
+              try {
+                  await axios.post(`http://localhost:2000/purchase/updatetransactionstatus`, {
+                      order_id: options.order_id,
+                      payment_id: response.razorpay_payment_id,
+                  }, { headers: { "Authorization": token } });
+
+                  alert('You are a Premium User Now');
+              } catch (error) {
+                  console.error("Error updating transaction status:", error);
+                  alert('Transaction Failed. Please try againnnnn.');
+              }
+          },
+          "theme": {
+              "color": "#3399cc"
+          }
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+      e.preventDefault();
+
+  } catch (error) {
+      console.error("Error during payment process:", error);
+      alert('Something went wrong. Please try again.');
+  }
+};
+
+
 
  
 form.addEventListener('submit', function(event) {
+
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(form); // Collect form data
     const inputType = formData.get('inputType'); // Get selected radio button value
@@ -50,8 +97,8 @@ form.addEventListener('submit', function(event) {
     };
     console.log(userDetails);
  
-
-    axios.post("http://localhost:2000/user/add-user", userDetails)
+    const token= localStorage.getItem('token');
+    axios.post("http://localhost:2000/user/add-user", userDetails,{headers:{"Authorization" : token}})
     .then((res) => {
       console.log(res);
       // Display the updated users list
@@ -78,8 +125,6 @@ form.addEventListener('submit', function(event) {
 
     // Append the <li> to the userexpense element
     document.getElementById('userexpense').appendChild(listItem);
-
-
 });
 
 
@@ -97,7 +142,7 @@ function handleOnTap() {                             // this function opens the 
 
 async function handleMonthChange() {
   document.getElementById('month-list').innerHTML = '';
-
+  const token= localStorage.getItem('token');
   const selectedDate = new Date(dateInput.value);
   var month = selectedDate.toLocaleString("default", { month: "long" });
   var year = selectedDate.getFullYear();
@@ -113,7 +158,7 @@ async function handleMonthChange() {
   month=monthElement.textContent;
 
   try {
-    const response = await axios.get(`http://localhost:2000/user/get-expenses/${month}/${year}`);
+    const response = await axios.get(`http://localhost:2000/user/get-expenses/${month}/${year}` ,{headers:{"Authorization" : token}});
     const MonthList = document.getElementById('month-list');
 
  
@@ -154,7 +199,7 @@ async function handleMonthChange() {
 
 async function handleYearChange() {
   document.getElementById('year-list').innerHTML = '';
-
+  const token= localStorage.getItem('token');
   const selectedDate = new Date(dateInput.value);
   var year = selectedDate.getFullYear();
 
@@ -166,7 +211,7 @@ async function handleYearChange() {
   yearElement.textContent = year;
 
   try {
-    const response = await axios.get(`http://localhost:2000/user/get-expenses/${year}`);
+    const response = await axios.get(`http://localhost:2000/user/get-expenses/${year}`,{headers:{"Authorization" : token}});
     const YearList = document.getElementById('year-list');
 
     let credit = 0;  
@@ -331,3 +376,18 @@ function adjustYear(years) {
 
 
 //-----------------------------------------------------------------------------------------------------------------------
+
+
+async function isPremium() {
+
+  const token = localStorage.getItem('token');
+  const response = await axios.get(`http://localhost:2000/purchase/isPremium`, {headers: { "Authorization": token }});
+ 
+  console.log(response.data.isPremium);
+  if(response.data.isPremium){
+    document.getElementById("rzp-button1").style.display = "none";
+  }else{
+    document.getElementById("rzp-button1").style.display = "block";
+  }
+
+}

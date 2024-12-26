@@ -353,6 +353,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
                   }, { headers: { "Authorization": token } });
 
                   alert('You are a Premium User Now');
+                  localStorage.setItem('token',res.data.token)
                   document.getElementById("rzp-button1").style.display = "none";
                   document.getElementById("button-holder").style.display = "block";
 
@@ -409,7 +410,7 @@ async function leaderboard() {
   // Add each user as a list item
   leaderboard.forEach(user => {
       const listItem = document.createElement('li');
-      listItem.textContent = `${user.email} - Total Expenses: ₹${user.totalExpenses}`;
+      listItem.textContent = `${user.username}  -  ${user.email} - Total Expenses: ₹${user.totalExpenses}`;
       leaderboardList.appendChild(listItem);
   });
 }

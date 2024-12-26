@@ -1,6 +1,6 @@
 const User=require('../models/User')
 const signup=require('../models/SignupUser')
- 
+userController=require('./user')
  
 const jwt=require('jsonwebtoken');
 const Order = require('../models/orders');
@@ -53,7 +53,7 @@ const updateTransactionStatus = async (req, res) => {
         // Update the user to premium status
         if (req.user) {
             await req.user.update({ isPremium: true });
-            return res.status(202).json({ success: true, message: "Transaction Successful" });
+            return res.status(202).json({ success: true, message: "Transaction Successful",token:userController.generateAccessToken(userId,undefined,true) });
         } else {
             return res.status(400).json({ success: false, message: "User not found in request" });
         }
@@ -81,13 +81,15 @@ const isPremium = async (req, res) => {
 const getLeaderboard = async (req, res) => {
     try {
         // Fetch all users from the signup table
-        const users = await signup.findAll();
+        const users = await signup.findAll({
+            attributes:['email','username']                        //for optimization use take only attributes that we need
+        });
 
         // Calculate total expenses for each user
         const leaderboardData = await Promise.all(
             users.map(async (user) => {
                 const email = user.email;
-
+                const username = user.username;
                 // Sum the credit and debit values for the user
                 const totalCredit = await User.sum('credit', { where: { signupEmail :email } });
                 const totalDebit = await User.sum('debit', { where: { signupEmail :email } });
@@ -96,6 +98,7 @@ const getLeaderboard = async (req, res) => {
                 const totalExpenses = (totalCredit || 0) + (totalDebit || 0);
 
                 return {
+                    username: username,
                     email: email,
                     totalExpenses: totalExpenses,
                 };

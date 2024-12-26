@@ -77,36 +77,32 @@ const isPremium = async (req, res) => {
     // Send the filtered users as a response
     res.status(200).json({ isPremium });
 };
-
+const sequelize=require('../util/database'); 
 const getLeaderboard = async (req, res) => {
     try {
-        // Fetch all users from the signup table
+        // Fetch all users from the signup table along with their totalCredit and totalDebit
         const users = await signup.findAll({
-            attributes:['email','username']                        //for optimization use take only attributes that we need
+            attributes: [
+                'email',
+                'username',
+                [sequelize.fn('SUM', sequelize.col('credit')), 'totalCredit'],
+                [sequelize.fn('SUM', sequelize.col('debit')), 'totalDebit']
+            ],
+            include: [
+                {
+                    model: User,
+                    attributes: []
+                }
+            ],
+            group: ['email', 'username']
         });
 
-        // Calculate total expenses for each user
-        const leaderboardData = await Promise.all(
-            users.map(async (user) => {
-                const email = user.email;
-                const username = user.username;
-                // Sum the credit and debit values for the user
-                const totalCredit = await User.sum('credit', { where: { signupEmail :email } });
-                const totalDebit = await User.sum('debit', { where: { signupEmail :email } });
-
-                // Calculate total expenses (credit + debit)
-                const totalExpenses = (totalCredit || 0) + (totalDebit || 0);
-
-                return {
-                    username: username,
-                    email: email,
-                    totalExpenses: totalExpenses,
-                };
-            })
-        );
-
-        // Sort the leaderboard data in descending order of total expenses
-        leaderboardData.sort((a, b) => b.totalExpenses - a.totalExpenses);
+        // Calculate total expenses for each user and sort in descending order of total expenses
+        const leaderboardData = users.map(user => ({
+            username: user.username,
+            email: user.email,
+            totalExpenses: (user.dataValues.totalCredit || 0) + (user.dataValues.totalDebit || 0)
+        })).sort((a, b) => b.totalExpenses - a.totalExpenses);
 
         // Send the sorted leaderboard data as a response
         res.status(200).json({ success: true, leaderboard: leaderboardData });
@@ -115,6 +111,7 @@ const getLeaderboard = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
 
 
 module.exports = { purchasepremium , updateTransactionStatus,isPremium,getLeaderboard};

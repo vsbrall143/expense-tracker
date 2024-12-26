@@ -130,9 +130,18 @@ exports.getExpense = async (req, res, next) => {
      description: description,
      signupEmail:email,
    });
-   console.log(data);
-   res.status(201).json({ newUserDetails: data });
 
+   const user = await signup.findOne({ where: { email } });
+ 
+
+   // Calculate the new total
+   const newTotal = (user.total || 0) + (credit || 0) - (debit || 0);
+
+   // Update the total field
+   user.total = newTotal;
+   await user.save();
+
+   res.status(201).json({ newUserDetails: data });
 
  };
 

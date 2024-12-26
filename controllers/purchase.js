@@ -78,7 +78,40 @@ const isPremium = async (req, res) => {
     res.status(200).json({ isPremium });
 };
 
+const getLeaderboard = async (req, res) => {
+    try {
+        // Fetch all users from the signup table
+        const users = await signup.findAll();
+
+        // Calculate total expenses for each user
+        const leaderboardData = await Promise.all(
+            users.map(async (user) => {
+                const email = user.email;
+
+                // Sum the credit and debit values for the user
+                const totalCredit = await User.sum('credit', { where: { signupEmail :email } });
+                const totalDebit = await User.sum('debit', { where: { signupEmail :email } });
+
+                // Calculate total expenses (credit + debit)
+                const totalExpenses = (totalCredit || 0) + (totalDebit || 0);
+
+                return {
+                    email: email,
+                    totalExpenses: totalExpenses,
+                };
+            })
+        );
+
+        // Sort the leaderboard data in descending order of total expenses
+        leaderboardData.sort((a, b) => b.totalExpenses - a.totalExpenses);
+
+        // Send the sorted leaderboard data as a response
+        res.status(200).json({ success: true, leaderboard: leaderboardData });
+    } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
 
 
-
-module.exports = { purchasepremium , updateTransactionStatus,isPremium};
+module.exports = { purchasepremium , updateTransactionStatus,isPremium,getLeaderboard};

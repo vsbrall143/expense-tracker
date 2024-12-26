@@ -16,50 +16,6 @@ window.onload = function() {
 }
 
 
-document.getElementById('rzp-button1').onclick = async function (e) {
-  console.log("helllllllllllllllllllllllllllooooooooooooooooooooo")
-  // const token = localStorage.getItem('token');
-  // console.log(token);
-  // console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhh");
-  try {
-  
-      const token = localStorage.getItem('token');
-      console.log(token);
-      const response = await axios.get(`http://localhost:2000/purchase/premiummembership`, {headers: { "Authorization": token }});
-
-      console.log(response);
-
-      var options = {
-          "key": response.data.key_id, // Enter the Key ID generated from the Dashboard
-          "order_id": response.data.order.id, // For one-time payment
-          "handler": async function (response) {
-              try {
-                  await axios.post(`http://localhost:2000/purchase/updatetransactionstatus`, {
-                      order_id: options.order_id,
-                      payment_id: response.razorpay_payment_id,
-                  }, { headers: { "Authorization": token } });
-
-                  alert('You are a Premium User Now');
-              } catch (error) {
-                  console.error("Error updating transaction status:", error);
-                  alert('Transaction Failed. Please try againnnnn.');
-              }
-          },
-          "theme": {
-              "color": "#3399cc"
-          }
-      };
-
-      const rzp1 = new Razorpay(options);
-      rzp1.open();
-      e.preventDefault();
-
-  } catch (error) {
-      console.error("Error during payment process:", error);
-      alert('Something went wrong. Please try again.');
-  }
-};
-
 
 
  
@@ -376,6 +332,49 @@ function adjustYear(years) {
 
 
 //-----------------------------------------------------------------------------------------------------------------------
+document.getElementById('rzp-button1').onclick = async function (e) {
+ 
+  try {
+  
+      const token = localStorage.getItem('token');
+      console.log(token);
+      const response = await axios.get(`http://localhost:2000/purchase/premiummembership`, {headers: { "Authorization": token }});
+
+      console.log(response);
+
+      var options = {
+          "key": response.data.key_id, // Enter the Key ID generated from the Dashboard
+          "order_id": response.data.order.id, // For one-time payment
+          "handler": async function (response) {
+              try {
+                  await axios.post(`http://localhost:2000/purchase/updatetransactionstatus`, {
+                      order_id: options.order_id,
+                      payment_id: response.razorpay_payment_id,
+                  }, { headers: { "Authorization": token } });
+
+                  alert('You are a Premium User Now');
+                  document.getElementById("rzp-button1").style.display = "none";
+                  document.getElementById("button-holder").style.display = "block";
+
+              } catch (error) {
+                  console.error("Error updating transaction status:", error);
+                  alert('Transaction Failed. Please try againnnnn.');
+              }
+          },
+          "theme": {
+              "color": "#3399cc"
+          }
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+      e.preventDefault();
+
+  } catch (error) {
+      console.error("Error during payment process:", error);
+      alert('Something went wrong. Please try again.');
+  }
+};
 
 
 async function isPremium() {
@@ -386,8 +385,32 @@ async function isPremium() {
   console.log(response.data.isPremium);
   if(response.data.isPremium){
     document.getElementById("rzp-button1").style.display = "none";
+    document.getElementById("button-holder").style.display = "block";
   }else{
     document.getElementById("rzp-button1").style.display = "block";
   }
 
 }
+
+
+async function leaderboard() {
+
+  const token = localStorage.getItem('token');
+  const response = await axios.get(`http://localhost:2000/purchase/leaderboard`, {headers: { "Authorization": token }});
+ 
+  console.log(response.data);
+
+  const leaderboard = response.data.leaderboard;
+  const leaderboardList = document.getElementById('leaderboardScore');
+
+  // Clear any existing content in the list
+  leaderboardList.innerHTML = '';
+
+  // Add each user as a list item
+  leaderboard.forEach(user => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${user.email} - Total Expenses: ₹${user.totalExpenses}`;
+      leaderboardList.appendChild(listItem);
+  });
+}
+

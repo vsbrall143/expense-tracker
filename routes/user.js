@@ -17,6 +17,8 @@ router.post('/purchase/updatetransactionstatus',auth.au, purchaseController.upda
 
 router.get('/purchase/isPremium',auth.au, purchaseController.isPremium);
 
+router.get('/purchase/leaderboard',auth.au, purchaseController.getLeaderboard);
+
 
 
 

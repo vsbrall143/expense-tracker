@@ -77,32 +77,19 @@ const isPremium = async (req, res) => {
     // Send the filtered users as a response
     res.status(200).json({ isPremium });
 };
+
 const sequelize=require('../util/database'); 
+
+
 const getLeaderboard = async (req, res) => {
     try {
         // Fetch all users from the signup table along with their totalCredit and totalDebit
-        const users = await signup.findAll({
-            attributes: [
-                'email',
-                'username',
-                [sequelize.fn('SUM', sequelize.col('credit')), 'totalCredit'],
-                [sequelize.fn('SUM', sequelize.col('debit')), 'totalDebit']
-            ],
-            include: [
-                {
-                    model: User,
-                    attributes: []
-                }
-            ],
-            group: ['email', 'username']
-        });
+  
+ 
+        const users = await signup.findAll({ attributes: ['email','username','total'],});
 
         // Calculate total expenses for each user and sort in descending order of total expenses
-        const leaderboardData = users.map(user => ({
-            username: user.username,
-            email: user.email,
-            totalExpenses: (user.dataValues.totalCredit || 0) + (user.dataValues.totalDebit || 0)
-        })).sort((a, b) => b.totalExpenses - a.totalExpenses);
+        const leaderboardData = users.sort((a, b) => b.total - a.total);
 
         // Send the sorted leaderboard data as a response
         res.status(200).json({ success: true, leaderboard: leaderboardData });

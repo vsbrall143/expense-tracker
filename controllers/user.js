@@ -3,6 +3,7 @@ const signup=require('../models/SignupUser')
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 // const { Op } = require('sequelize');
+const sequelize=require('../util/database'); 
 
 
 exports.getMonthExpenses = async (req, res, next) => {
@@ -56,7 +57,7 @@ exports.getYearExpenses = async (req, res, next) => {
  
 
 
-const { Op } = require('sequelize'); // Import Op for comparison operators
+const { Op, Transaction } = require('sequelize'); // Import Op for comparison operators
  
 
 exports.getExpense = async (req, res, next) => {
@@ -111,39 +112,55 @@ exports.getExpense = async (req, res, next) => {
 };
 
 
- exports.postUser = async (req, res, next) => {
 
- 
-   const day = req.body.day;
-   const month = req.body.month;
-   const year = req.body.year;
-   const credit = req.body.credit;
-   const debit = req.body.debit;
-   const description = req.body.description;
-   const email=req.user.email;
-   const data = await User.create({
-     day: day,
-     month: month,
-     year: year,
-     credit: credit,
-     debit: debit,
-     description: description,
-     signupEmail:email,
-   });
+exports.postUser = async (req, res, next) => {
+  const { day, month, year, credit = 0, debit = 0, description } = req.body;
+  const email = req.user.email;
 
-   const user = await signup.findOne({ where: { email } });
- 
+  // Start the transaction
+  const t = await sequelize.transaction();
 
-   // Calculate the new total
-   const newTotal = (user.total || 0) + (credit || 0) - (debit || 0);
+  try {
+    // Create a transaction record
+    const data = await User.create(
+      {
+        day,
+        month,
+        year,
+        credit,
+        debit,
+        description,
+        signupEmail: email,
+      },
+      { transaction: t }
+    );
 
-   // Update the total field
-   user.total = newTotal;
-   await user.save();
+    // Find the user
+    const user = await signup.findOne({ where: { email }, transaction: t });
 
-   res.status(201).json({ newUserDetails: data });
+    if (!user) {
+      throw new Error("User not found.");
+    }
 
- };
+    // Calculate the new total
+    const newTotal = (user.total || 0) + credit - debit;
+
+    // Update the user's total balance
+    user.total = newTotal;
+    await user.save({ transaction: t });
+
+    // Commit the transaction if all operations are successful
+    await t.commit();
+
+    // Send success response
+    res.status(201).json({ newUserDetails: data });
+  } catch (error) {
+    // Rollback the transaction in case of an error
+    await t.rollback();
+    console.error("Transaction failed:", error);
+    res.status(500).json({ error: "An error occurred while processing the transaction." });
+  }
+};
 
 
  function generateAccessToken(email){

@@ -410,7 +410,7 @@ async function leaderboard() {
   // Add each user as a list item
   leaderboard.forEach(user => {
       const listItem = document.createElement('li');
-      listItem.textContent = `${user.username}  -  ${user.email} - Total Expenses: ₹${user.totalExpenses}`;
+      listItem.textContent = `${user.username}  -  ${user.email} - Total Expenses: ₹${user.total}`;
       leaderboardList.appendChild(listItem);
   });
 }

@@ -4,6 +4,7 @@ const express = require('express');
 
 const adminController = require('../controllers/user');
 const purchaseController = require('../controllers/purchase');
+const passwordController = require('../controllers/password');
 
 const router = express.Router();
  
@@ -19,7 +20,7 @@ router.get('/purchase/isPremium',auth.au, purchaseController.isPremium);
 
 router.get('/purchase/leaderboard',auth.au, purchaseController.getLeaderboard);
 
-
+router.post('/password/forgotpassword', passwordController.forgotPassword);
 
 
 router.post('/user/add-user',auth.au, adminController.postUser) //middle ware auth.au is added to add retrieve email id form header and add it to request for easy working in controllers

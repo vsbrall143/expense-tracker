@@ -9,7 +9,7 @@ async function signupForm(event) {
     };
 
     try {
-        const res = await axios.post(`http://localhost:2000/user/signup`, userDetails);
+        const res = await axios.post(`http://localhost:3000/user/signup`, userDetails);
         console.log(res);
         alert("Signup successful!");
     } catch (error) {
@@ -36,7 +36,7 @@ async function loginForm(event) {
     };
 
     try {
-        const res = await axios.post(`http://localhost:2000/user/login`, loginDetails);
+        const res = await axios.post(`http://localhost:3000/user/login`, loginDetails);
         console.log(res);
         localStorage.setItem('token',res.data.token);
         // alert("Logged in successfully!");

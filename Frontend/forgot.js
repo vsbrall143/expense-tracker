@@ -11,7 +11,7 @@ function forgot() {
     }
 
     // Make an API call to handle the forgot email functionality
-    axios.post('http://localhost:2000/password/forgotpassword', { email })
+    axios.post('http://localhost:3000/password/forgotpassword', { email })
         .then(response => {
             alert("An email has been sent to your address if it exists in our system.");
         })
@@ -27,7 +27,7 @@ function reset() {
     const url = window.location.href;
     const uuid = url.split('/').pop();
 
-    axios.get(`http://localhost:2000/password/resetpassword/${uuid}`)
+    axios.get(`http://localhost:3000/password/resetpassword/${uuid}`)
         .then(response => {
             alert("email restored");
         })

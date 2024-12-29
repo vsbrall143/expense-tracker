@@ -54,7 +54,7 @@ form.addEventListener('submit', function(event) {
     console.log(userDetails);
  
     const token= localStorage.getItem('token');
-    axios.post("http://localhost:2000/user/add-user", userDetails,{headers:{"Authorization" : token}})
+    axios.post("http://localhost:3000/user/add-user", userDetails,{headers:{"Authorization" : token}})
     .then((res) => {
       console.log(res);
       // Display the updated users list
@@ -114,7 +114,7 @@ async function handleMonthChange() {
   month=monthElement.textContent;
 
   try {
-    const response = await axios.get(`http://localhost:2000/user/get-expenses/${month}/${year}` ,{headers:{"Authorization" : token}});
+    const response = await axios.get(`http://localhost:3000/user/get-expenses/${month}/${year}` ,{headers:{"Authorization" : token}});
     const MonthList = document.getElementById('month-list');
 
  
@@ -167,7 +167,7 @@ async function handleYearChange() {
   yearElement.textContent = year;
 
   try {
-    const response = await axios.get(`http://localhost:2000/user/get-expenses/${year}`,{headers:{"Authorization" : token}});
+    const response = await axios.get(`http://localhost:3000/user/get-expenses/${year}`,{headers:{"Authorization" : token}});
     const YearList = document.getElementById('year-list');
 
     let credit = 0;  
@@ -227,7 +227,7 @@ async function handleDateChange() {
 
   try {
     const token= localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:2000/user/get-expense/${day}/${month}/${year}`,{headers:{"Authorization" : token}});
+    const response = await axios.get(`http://localhost:3000/user/get-expense/${day}/${month}/${year}`,{headers:{"Authorization" : token}});
     
     const expenses = response.data.expenses; // Assumes the API response contains an array of expenses
     const userexpense = document.getElementById("userexpense");
@@ -338,7 +338,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
   
       const token = localStorage.getItem('token');
       console.log(token);
-      const response = await axios.get(`http://localhost:2000/purchase/premiummembership`, {headers: { "Authorization": token }});
+      const response = await axios.get(`http://localhost:3000/purchase/premiummembership`, {headers: { "Authorization": token }});
 
       console.log(response);
 
@@ -347,7 +347,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
           "order_id": response.data.order.id, // For one-time payment
           "handler": async function (response) {
               try {
-                  await axios.post(`http://localhost:2000/purchase/updatetransactionstatus`, {
+                  await axios.post(`http://localhost:3000/purchase/updatetransactionstatus`, {
                       order_id: options.order_id,
                       payment_id: response.razorpay_payment_id,
                   }, { headers: { "Authorization": token } });
@@ -381,7 +381,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 async function isPremium() {
 
   const token = localStorage.getItem('token');
-  const response = await axios.get(`http://localhost:2000/purchase/isPremium`, {headers: { "Authorization": token }});
+  const response = await axios.get(`http://localhost:3000/purchase/isPremium`, {headers: { "Authorization": token }});
  
   console.log(response.data.isPremium);
   if(response.data.isPremium){
@@ -397,7 +397,7 @@ async function isPremium() {
 async function leaderboard() {
 
   const token = localStorage.getItem('token');
-  const response = await axios.get(`http://localhost:2000/purchase/leaderboard`, {headers: { "Authorization": token }});
+  const response = await axios.get(`http://localhost:3000/purchase/leaderboard`, {headers: { "Authorization": token }});
  
   console.log(response.data);
 

@@ -20,4 +20,22 @@ function forgot() {
             alert("An error occurred while processing your request.");
         });
 }
+
+
+function reset() {
+    event.preventDefault();  
+    const url = window.location.href;
+    const uuid = url.split('/').pop();
+
+    axios.get(`http://localhost:2000/password/resetpassword/${uuid}`)
+        .then(response => {
+            alert("email restored");
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while processing your requesttttttttttttttt.");
+        });
+}
+
+
 document.querySelector("form").addEventListener("submit", forgot);

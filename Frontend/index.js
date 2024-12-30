@@ -416,3 +416,7 @@ async function leaderboard() {
 }
 
 
+function handleDownload() {
+  alert("Download button clicked! Add your download logic here.");
+  // Implement download functionality here
+}

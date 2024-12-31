@@ -27,6 +27,7 @@ router.get('/password/resetpassword/:uuid',passwordController.resetPassword);
 router.get('/password/updatepassword/:resetpasswordid', passwordController.updatePassword);
 
 
+router.get('/download', auth.au, adminController.downloadExpenses)
 
 router.post('/user/add-user',auth.au, adminController.postUser) //middle ware auth.au is added to add retrieve email id form header and add it to request for easy working in controllers
 

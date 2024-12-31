@@ -4,32 +4,70 @@ const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 // const { Op } = require('sequelize');
 const sequelize=require('../util/database'); 
+const { BlobServiceClient } = require('@azure/storage-blob');
+const { v1: uuidv1} = require('uuid');
 
+const ITEMS_PER_PAGE = 2;
 
-exports.getMonthExpenses = async (req, res, next) => {
-  try {
-    // Extract month parameter from the request
-    const email=req.user.email;
+exports.getMonthExpenses = (req, res, next) => {
+  const page = +req.query.page || 1;
+  console.log(page);
+  const month = req.params.month;
+  const year = req.params.year;
+  let totalItems;
 
-    const month = req.params.month;
-    const year =req.params.year;
-    // Find all users (expenses) with the given month
-    const users = await User.findAll({
-      where: {
-        signupEmail:email,
-        month: month, // Filter records where month matches the parameter
-        year:year
-      }
-    });
+  // Count total items for the month and year
+  User.count({
+    where: { month: month, year: year }
+  })
+    .then((count) => {
+      totalItems = count;
 
-    // Send the filtered users as a response
-    res.status(200).json({ users });
-  } catch (error) {
-    // Handle errors gracefully
-    console.error("Error fetching month expenses:", error);
-    res.status(500).json({ message: "Failed to fetch expenses for the given month" });
-  }
+      return User.findAll({
+        where: { month: month, year: year },
+        offset: (page - 1) * ITEMS_PER_PAGE,
+        limit: ITEMS_PER_PAGE,
+      });
+    })
+    .then((users) => {
+      res.json({
+        users: users,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        nextPage: page + 1,
+        hasPreviousPage: page > 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      });
+    })
+    .catch((err) => console.log(err));
 };
+
+
+// exports.getMonthExpenses = async (req, res, next) => {
+//   try {
+//     // Extract month parameter from the request
+//     const email=req.user.email;
+
+//     const month = req.params.month;
+//     const year =req.params.year;
+//     // Find all users (expenses) with the given month
+//     const users = await User.findAll({
+//       where: {
+//         signupEmail:email,
+//         month: month, // Filter records where month matches the parameter
+//         year:year
+//       }
+//     });
+
+//     // Send the filtered users as a response
+//     res.status(200).json({ users });
+//   } catch (error) {
+//     // Handle errors gracefully
+//     console.error("Error fetching month expenses:", error);
+//     res.status(500).json({ message: "Failed to fetch expenses for the given month" });
+//   }
+// };
 
 
 exports.getYearExpenses = async (req, res, next) => {
@@ -228,3 +266,94 @@ exports.postUser = async (req, res, next) => {
     res.status(500).json({ message: "An error occurred during signup." });
   }
 };
+
+
+ 
+
+exports.downloadExpenses = async (req, res) => {
+
+  try {
+ 
+
+    const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
+    if (!AZURE_STORAGE_CONNECTION_STRING) {
+      return res.status(500).json({ success: false, message: 'Azure connection string is not defined.' });
+    }
+    console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv-------------------------------vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+    const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+
+    const containerName =  'vikasbralllllllqwerty';
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    if (!(await containerClient.exists())) {
+      const createContainerResponse = await containerClient.create({ access: 'container' });
+      console.log('Container created successfully. requestId:', createContainerResponse.requestId);
+    }
+
+    const blobName = `expenses-${uuidv1()}.txt`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    const data = JSON.stringify(await req.user.getYearExpenses());
+
+    const uploadBlobResponse = await blockBlobClient.upload(data, Buffer.byteLength(data));
+    console.log('Blob uploaded successfully. requestId:', uploadBlobResponse.requestId);
+
+    const fileUrl = `${blobServiceClient.url}/${containerName}/${blobName}`;
+    res.status(201).json({ fileUrl, success: true });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err, success: false, message: 'Something went wrong.' });
+  }
+};
+
+
+// exports.downloadExpenses =  async (req, res) => {
+
+//   try {
+//       if(!req.user.ispremiumuser){
+//           return res.status(401).json({ success: false, message: 'User is not a premium User'})
+//       }
+//       const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING; // check this in the task. I have put mine. Never push it to github.
+//       // Create the BlobServiceClient object which will be used to create a container client
+//       const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+
+//       // V.V.V.Imp - Guys Create a unique name for the container
+//       // Name them your "mailidexpensetracker" as there are other people also using the same storage
+
+//       const containerName = 'prasadyash549yahooexpensetracker'; //this needs to be unique name
+
+//       console.log('\nCreating container...');
+//       console.log('\t', containerName);
+
+//       // Get a reference to a container
+//       const containerClient = await blobServiceClient.getContainerClient(containerName);
+
+//       //check whether the container already exists or not
+//       if(!containerClient.exists()){
+//           // Create the container if the container doesnt exist
+//           const createContainerResponse = await containerClient.create({ access: 'container'});
+//           console.log("Container was created successfully. requestId: ", createContainerResponse.requestId);
+//       }
+//       // Create a unique name for the blob
+//       const blobName = 'expenses' + uuidv1() + '.txt';
+
+//       // Get a block blob client
+//       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+//       console.log('\nUploading to Azure storage as blob:\n\t', blobName);
+
+//       // Upload data to the blob as a string
+//       const data =  JSON.stringify(await req.user.getYearExpenses());
+
+//       const uploadBlobResponse = await blockBlobClient.upload(data, data.length);
+//       console.log("Blob was uploaded successfully. requestId: ", JSON.stringify(uploadBlobResponse));
+
+//       //We send the fileUrl so that the in the frontend we can do a click on this url and download the file
+//       const fileUrl = `https://demostoragesharpener.blob.core.windows.net/${containerName}/${blobName}`;
+//       res.status(201).json({ fileUrl, success: true}); // Set disposition and send it.
+//   } catch(err) {
+//       res.status(500).json({ error: err, success: false, message: 'Something went wrong'})
+//   }
+
+// };

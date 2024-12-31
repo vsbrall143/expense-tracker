@@ -7,7 +7,7 @@ const Order = require('../models/orders');
 const Razorpay = require('razorpay');
 
 const purchasepremium = async (req, res) => {
-    console.log("purchase premium-controller--------------------------------------")
+ 
     try {
         const rzp = new Razorpay({
             key_id: 'rzp_test_J9qcGHmdTPOtbb',

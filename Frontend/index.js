@@ -174,10 +174,11 @@ let lastPage = 1;
 
   function changePage(direction) {
     const token = localStorage.getItem('token');
-    const selectedDate = new Date(document.getElementById('dateInput').value);
-    const month = selectedDate.toLocaleString("default", { month: "long" });
-    const year = selectedDate.getFullYear();
-
+    let selectedDate = new Date(document.getElementById('dateInput').value);
+    // let month = selectedDate.toLocaleString("default", { month: "long" });
+    // let year = selectedDate.getFullYear();
+    let month=monthElement.textContent;
+    let year=yearElement.textContent;
     currentPage += direction;
     loadPage(month, year, currentPage);
   }

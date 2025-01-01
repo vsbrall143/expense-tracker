@@ -10,8 +10,8 @@ const purchasepremium = async (req, res) => {
  
     try {
         const rzp = new Razorpay({
-            key_id: 'rzp_test_J9qcGHmdTPOtbb',
-            key_secret:'NlZ5IMkC8R4YC2KBFM9Z415C'
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret:process.env.RAZORPAY_KEY_SECRET
         });
 
         const amount = 250000; // Amount in smallest currency unit (e.g., paise for INR)

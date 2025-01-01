@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "NODE_ENV=production USER=node-complete DATABASE=root PASSWORD=Xmachin@123 node app.js",
+    "start:dev": "nodemon app.js"
   },
   "author": "vikas sharma",
   "license": "ISC",
@@ -16,12 +17,15 @@
     "@azure/storage-blob": "^12.26.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "compression": "^1.7.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-handlebars": "^8.0.1",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
     "mysql2": "^3.11.5",
     "pug": "^3.0.3",
     "razorpay": "^2.9.5",

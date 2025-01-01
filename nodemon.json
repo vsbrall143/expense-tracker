@@ -1,0 +1,7 @@
+{
+    "env":{
+        "USER":"node-complete",
+        "PASSWORD":"Xmachin@123",
+        "DATABASE":"root"
+    }
+}

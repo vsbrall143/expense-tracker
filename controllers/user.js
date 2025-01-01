@@ -7,9 +7,10 @@ const sequelize=require('../util/database');
 const { BlobServiceClient } = require('@azure/storage-blob');
 const { v1: uuidv1} = require('uuid');
 
-const ITEMS_PER_PAGE = 2;
 
 exports.getMonthExpenses = (req, res, next) => {
+  
+const ITEMS_PER_PAGE = parseInt(req.params.rows, 10);  
   const page = +req.query.page || 1;
   console.log(page);
   const month = req.params.month;

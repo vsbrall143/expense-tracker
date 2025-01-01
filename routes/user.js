@@ -33,7 +33,7 @@ router.post('/user/add-user',auth.au, adminController.postUser) //middle ware au
 
 router.get('/user/get-expenses/:year' ,auth.au, adminController.getYearExpenses)//email is added in header because it can be added to both get and post requests
 
-router.get('/user/get-expenses/:month/:year' ,auth.au, adminController.getMonthExpenses)
+router.get('/user/get-expenses/:month/:year/:rows' ,auth.au, adminController.getMonthExpenses)
 
 router.get('/user/get-expense/:day/:month/:year',auth.au, adminController.getExpense)  //req will go to authentication middle ware then to admin controller if sucessful
   

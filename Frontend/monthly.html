@@ -43,6 +43,22 @@
 
 <br>
 
+<div class="container mt-4">
+  <label for="rowsPerPageInput" class="form-label">Enter no. rows to display:</label>
+  <input 
+    type="number" 
+    id="rowsPerPageInput" 
+    class="form-control w-25" 
+    placeholder="1" 
+    onchange="updateRowsPerPage(this.value)"
+    min="1"
+  />
+</div>
+
+
+
+
+
 <div class="container">
   <button class="arrow left" onclick="handleMonthNavigation(-1)" id="prevMonth">&lt;</button>
   <div class="content">

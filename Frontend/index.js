@@ -96,6 +96,19 @@ function handleOnTap() {                             // this function opens the 
 
 
 
+ 
+
+  // Function to update rows per page
+  function updateRowsPerPage(value) {
+
+    localStorage.setItem('rows', value)
+    let month=monthElement.textContent;
+    let year=yearElement.textContent;
+    currentPage =1;
+    loadPage(month, year, currentPage);
+ 
+  }
+
 
 
 let currentPage = 1;
@@ -123,8 +136,9 @@ let lastPage = 1;
 
   async function loadPage(month, year, page) {
     const token = localStorage.getItem('token');
+    const rows= localStorage.getItem('rows');
     try {
-      const response = await axios.get(`http://localhost:3000/user/get-expenses/${month}/${year}?page=${page}`, {
+      const response = await axios.get(`http://localhost:3000/user/get-expenses/${month}/${year}/${rows}?page=${page}`, {
         headers: { "Authorization": token }
       });
 
@@ -461,3 +475,11 @@ async function handleDownload() {
  
 
 }
+
+
+
+
+
+
+
+
